@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^15.0.0",
+    "next": "15.0.7",
     "react": "^19.0.0-rc",
     "react-dom": "^19.0.0-rc",
     "maplibre-gl": "^4.7.1",
