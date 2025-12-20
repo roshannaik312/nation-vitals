@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import YearlyDualMap from '@/components/YearlyDualMap'
-import ThemeToggle from '@/components/ThemeToggle'
+import YearlyDualMap from '@/components/yearlydualmap'
+import ThemeToggle from '@/components/themetoggle'
 
 export default function Home() {
   const [summary, setSummary] = useState<any>(null)

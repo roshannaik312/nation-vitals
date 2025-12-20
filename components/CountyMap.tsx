@@ -21,10 +21,15 @@ export default function CountyMap() {
     fetch('/data/county_data.json')
       .then(r => r.json())
       .then(data => {
-        // Filter out counties with no data
-        const validCounties = data.filter((c: CountyData) =>
-          c.fips && c.fips !== '0' && (c.DrugDeaths !== null || c.RepublicanMargin !== null)
-        )
+        const validCounties: CountyData[] = []
+        for (let i = 0; i < data.length; i++) {
+          const c = data[i]
+          if (c.fips && c.fips !== '0') {
+            if (c.DrugDeaths !== null || c.RepublicanMargin !== null) {
+              validCounties.push(c)
+            }
+          }
+        }
         setCounties(validCounties)
         setLoading(false)
       })
@@ -52,16 +57,43 @@ export default function CountyMap() {
   }
 
   const getTopCounties = () => {
+    const result: CountyData[] = []
     if (metric === 'drugDeaths') {
-      return [...counties]
-        .filter(c => c.DrugDeathRate !== null)
-        .sort((a, b) => (b.DrugDeathRate || 0) - (a.DrugDeathRate || 0))
-        .slice(0, 20)
+      for (let i = 0; i < counties.length; i++) {
+        if (counties[i].DrugDeathRate !== null) {
+          result.push(counties[i])
+        }
+      }
+      for (let i = 0; i < result.length; i++) {
+        for (let j = i + 1; j < result.length; j++) {
+          const a = result[i].DrugDeathRate || 0
+          const b = result[j].DrugDeathRate || 0
+          if (b > a) {
+            const temp = result[i]
+            result[i] = result[j]
+            result[j] = temp
+          }
+        }
+      }
+      return result.slice(0, 20)
     } else {
-      return [...counties]
-        .filter(c => c.RepublicanMargin !== null)
-        .sort((a, b) => Math.abs(b.RepublicanMargin || 0) - Math.abs(a.RepublicanMargin || 0))
-        .slice(0, 20)
+      for (let i = 0; i < counties.length; i++) {
+        if (counties[i].RepublicanMargin !== null) {
+          result.push(counties[i])
+        }
+      }
+      for (let i = 0; i < result.length; i++) {
+        for (let j = i + 1; j < result.length; j++) {
+          const a = Math.abs(result[i].RepublicanMargin || 0)
+          const b = Math.abs(result[j].RepublicanMargin || 0)
+          if (b > a) {
+            const temp = result[i]
+            result[i] = result[j]
+            result[j] = temp
+          }
+        }
+      }
+      return result.slice(0, 20)
     }
   }
 
@@ -71,7 +103,6 @@ export default function CountyMap() {
 
   return (
     <div className="space-y-6">
-      {/* Controls */}
       <div className="flex gap-4 items-center">
         <label className="font-semibold">View:</label>
         <button
@@ -95,8 +126,6 @@ export default function CountyMap() {
           Political Lean
         </button>
       </div>
-
-      {/* Legend */}
       <div className="bg-white p-4 rounded-lg shadow">
         <h4 className="font-semibold mb-2">
           {metric === 'drugDeaths' ? 'Drug Death Rate (per 100k)' : 'Republican Margin (%)'}
@@ -160,7 +189,6 @@ export default function CountyMap() {
         </div>
       </div>
 
-      {/* Top Counties List */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold">
@@ -209,7 +237,6 @@ export default function CountyMap() {
         </div>
       </div>
 
-      {/* County Stats Grid - Visual Representation */}
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-semibold mb-4">County Data Visualization (Grid View)</h3>
         <p className="text-sm text-gray-600 mb-4">
@@ -231,7 +258,6 @@ export default function CountyMap() {
         </div>
       </div>
 
-      {/* Selected County Details */}
       {selectedCounty && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
           <div className="flex justify-between items-start">

@@ -21,17 +21,17 @@ export default function DualCountyMap() {
   const [hoveredCounty, setHoveredCounty] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  // Load county data
   useEffect(() => {
     fetch('/data/county_data.json')
       .then(r => r.json())
       .then((data: CountyData[]) => {
         const dataMap: Record<string, CountyData> = {}
-        data.forEach(county => {
+        for (let i = 0; i < data.length; i++) {
+          const county = data[i]
           if (county.fips && county.fips !== '0') {
             dataMap[county.fips] = county
           }
-        })
+        }
         setCountyData(dataMap)
         setLoading(false)
       })
@@ -79,14 +79,21 @@ export default function DualCountyMap() {
             data: geojson
           })
 
-          // Build color expression
           const fillExpression: any[] = ['match', ['get', 'GEOID']]
 
-          Object.entries(countyData).forEach(([fips, data]) => {
-            const value = isDrugMap ? data.DrugDeathRate : data.RepublicanMargin
+          const countyEntries = Object.entries(countyData)
+          for (let idx = 0; idx < countyEntries.length; idx++) {
+            const fips = countyEntries[idx][0]
+            const data = countyEntries[idx][1] as CountyData
+            let value
+            if (isDrugMap) {
+              value = data.DrugDeathRate
+            } else {
+              value = data.RepublicanMargin
+            }
             const color = getColorForValue(value, !isDrugMap)
             fillExpression.push(fips, color)
-          })
+          }
 
           fillExpression.push('#e5e7eb')
 
@@ -96,7 +103,9 @@ export default function DualCountyMap() {
             source: 'counties',
             paint: {
               'fill-color': fillExpression as any,
-              'fill-opacity': 0.8
+              'fill-opacity': 1,
+              'fill-antialias': true,
+              'fill-outline-color': fillExpression as any
             }
           })
 
@@ -106,11 +115,11 @@ export default function DualCountyMap() {
             source: 'counties',
             paint: {
               'line-color': '#ffffff',
-              'line-width': 0.5
+              'line-width': 0.5,
+              'line-opacity': 0.3
             }
           })
 
-          // Add hover
           newMap.on('mousemove', 'counties-fill', (e) => {
             if (e.features && e.features.length > 0) {
               const feature = e.features[0]
@@ -161,7 +170,6 @@ export default function DualCountyMap() {
 
   return (
     <div className="space-y-4">
-      {/* Legends */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white p-4 rounded-lg shadow">
           <h4 className="font-semibold mb-2">Drug Death Rate (per 100k)</h4>
@@ -220,7 +228,6 @@ export default function DualCountyMap() {
         </div>
       </div>
 
-      {/* Side by Side Maps */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="relative">
           <div className="absolute top-2 left-2 bg-white px-3 py-1 rounded shadow z-10 font-semibold">
@@ -236,7 +243,6 @@ export default function DualCountyMap() {
         </div>
       </div>
 
-      {/* Hover Tooltip */}
       {hoveredCounty && (
         <div className="bg-white p-4 rounded-lg shadow-xl border-2 border-blue-500">
           <h3 className="font-bold text-lg mb-2">{hoveredCounty.name} County</h3>

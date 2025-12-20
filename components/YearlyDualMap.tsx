@@ -70,13 +70,11 @@ export default function YearlyDualMap() {
     return Math.max(25000, Math.min(120000, income))
   }
 
-  // Statistical normalization: Residualize outcome variable by confounders
   const residualize = (
     data: Record<string, CountyData>,
     outcomeVar: 'DrugDeathRate' | 'RepublicanMargin',
     controlVars: Array<'PovertyRate' | 'UnemploymentRate' | 'urban_rural' | 'MedianIncome'>
   ): Record<string, number> => {
-    // Derive MedianIncome for all counties if needed
     const enhancedData: Record<string, CountyData> = {}
     Object.entries(data).forEach(([fips, county]) => {
       enhancedData[fips] = {
@@ -84,7 +82,6 @@ export default function YearlyDualMap() {
         MedianIncome: county.MedianIncome || deriveMedianIncome(county)
       }
     })
-    // Filter counties with complete data (use enhanced data with derived income)
     const validCounties = Object.entries(enhancedData).filter(([_, county]) => {
       if (!county[outcomeVar]) return false
       for (const confounder of controlVars) {
@@ -99,18 +96,15 @@ export default function YearlyDualMap() {
       return true
     })
 
-    if (validCounties.length < 10) return {} // Need sufficient data
+    if (validCounties.length < 10) return {}
 
-    // Prepare data matrices
     const y = validCounties.map(([_, c]) => c[outcomeVar] as number)
     const X: number[][] = validCounties.map(([_, c]) => {
-      const row: number[] = [1] // Intercept
+      const row: number[] = [1]
       for (const confounder of controlVars) {
         if (confounder === 'urban_rural') {
-          // Encode urban_rural as binary (1 = urban, 0 = rural)
           row.push(c.urban_rural?.toLowerCase().includes('urban') ? 1 : 0)
         } else if (confounder === 'MedianIncome') {
-          // Scale income to similar range as other variables
           row.push((c.MedianIncome || 55000) / 10000)
         } else {
           row.push(c[confounder] as number)
@@ -119,23 +113,16 @@ export default function YearlyDualMap() {
       return row
     })
 
-    // Simple OLS regression: β = (X'X)^-1 X'y
-    // For simplicity, use mean centering approach
     const yMean = y.reduce((a, b) => a + b, 0) / y.length
     const xMeans = X[0].map((_, colIdx) =>
       X.reduce((sum, row) => sum + row[colIdx], 0) / X.length
     )
 
-    // Center the data
     const yCentered = y.map(val => val - yMean)
     const XCentered = X.map(row => row.map((val, colIdx) => val - xMeans[colIdx]))
 
-    // Calculate fitted values using mean-centered regression
-    // For each confounding variable, subtract its linear effect
     const residuals: Record<string, number> = {}
     validCounties.forEach(([fips, _], idx) => {
-      // Simple approach: residual = y - ŷ where ŷ is predicted from confounders
-      // Use correlation-based adjustment
       let adjustment = 0
       for (let confIdx = 1; confIdx < XCentered[0].length; confIdx++) {
         const xCol = XCentered.map(row => row[confIdx])
@@ -152,7 +139,6 @@ export default function YearlyDualMap() {
     return residuals
   }
 
-  // State FIPS to 2-letter code mapping
   const stateFipsToAbbrev: Record<string, string> = {
     '01': 'AL', '02': 'AK', '04': 'AZ', '05': 'AR', '06': 'CA', '08': 'CO', '09': 'CT', '10': 'DE', '11': 'DC',
     '12': 'FL', '13': 'GA', '15': 'HI', '16': 'ID', '17': 'IL', '18': 'IN', '19': 'IA', '20': 'KS', '21': 'KY',
@@ -162,7 +148,6 @@ export default function YearlyDualMap() {
     '50': 'VT', '51': 'VA', '53': 'WA', '54': 'WV', '55': 'WI', '56': 'WY', '72': 'PR'
   }
 
-  // Levenshtein distance for fuzzy matching
   const levenshteinDistance = (str1: string, str2: string): number => {
     const s1 = str1.toLowerCase()
     const s2 = str2.toLowerCase()
@@ -191,7 +176,6 @@ export default function YearlyDualMap() {
     return matrix[len1][len2]
   }
 
-  // Search counties with fuzzy matching
   const searchCounties = (query: string): Array<{fips: string, name: string, distance: number}> => {
     if (!query || query.length < 2) return []
 
@@ -201,33 +185,38 @@ export default function YearlyDualMap() {
       distance: levenshteinDistance(query, name)
     }))
 
-    // Sort by distance (closest matches first), then by name
-    return results
-      .sort((a, b) => {
-        if (a.distance !== b.distance) return a.distance - b.distance
-        return a.name.localeCompare(b.name)
-      })
-      .slice(0, 10) // Show top 10 matches
+    for (let i = 0; i < results.length; i++) {
+      for (let j = i + 1; j < results.length; j++) {
+        if (results[j].distance < results[i].distance) {
+          const temp = results[i]
+          results[i] = results[j]
+          results[j] = temp
+        } else if (results[j].distance === results[i].distance) {
+          if (results[j].name < results[i].name) {
+            const temp = results[i]
+            results[i] = results[j]
+            results[j] = temp
+          }
+        }
+      }
+    }
+
+    return results.slice(0, 10)
   }
 
-  // Handle search for County A
   useEffect(() => {
     const results = searchCounties(searchQueryA)
     setSearchResultsA(results)
   }, [searchQueryA, fipsToName])
 
-  // Handle search for County B
   useEffect(() => {
     const results = searchCounties(searchQueryB)
     setSearchResultsB(results)
   }, [searchQueryB, fipsToName])
 
-  // Load a specific year's data with timeout and fallback to API route
   const loadYearData = async (year: string): Promise<Record<string, CountyData>> => {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 30000) // 30 second timeout
-
-    // Try static file first, then API route as fallback
+    const timeout = setTimeout(() => controller.abort(), 30000)
     const urls = [
       `/data/years/${year}.json`,
       `/api/years/${year}`
@@ -246,9 +235,10 @@ export default function YearlyDualMap() {
         const counties = await response.json()
 
         const dataMap: Record<string, CountyData> = {}
-        counties.forEach((county: CountyData) => {
+        for (let i = 0; i < counties.length; i++) {
+          const county = counties[i] as CountyData
           dataMap[county.fips] = county
-        })
+        }
 
         console.log(`✓ Loaded ${year} data from ${url}`)
         return dataMap
@@ -551,7 +541,6 @@ export default function YearlyDualMap() {
 
     fillExpression.push('#e5e7eb')
 
-    // Use MapLibre's style specification for smooth transitions
     const style = map.getStyle()
     if (style && style.layers) {
       const layerIndex = style.layers.findIndex((l: any) => l.id === 'counties-fill')
@@ -559,11 +548,12 @@ export default function YearlyDualMap() {
         const layer = style.layers[layerIndex] as any
         if (!layer.paint) layer.paint = {}
         layer.paint['fill-color-transition'] = { duration: 300 }
+        layer.paint['fill-outline-color-transition'] = { duration: 300 }
       }
     }
     
-    // Update colors (transition applied automatically)
     map.setPaintProperty('counties-fill', 'fill-color', fillExpression as any)
+    map.setPaintProperty('counties-fill', 'fill-outline-color', fillExpression as any)
   }
 
   const createMap = (container: HTMLDivElement, isDrugMap: boolean) => {
@@ -604,8 +594,9 @@ export default function YearlyDualMap() {
         source: 'counties',
         paint: {
           'fill-color': '#e5e7eb',
-          'fill-opacity': 0.95,
-          'fill-antialias': true
+          'fill-opacity': 1,
+          'fill-antialias': true,
+          'fill-outline-color': '#e5e7eb'
         }
       })
 
@@ -616,7 +607,7 @@ export default function YearlyDualMap() {
         paint: {
           'line-color': '#ffffff',
           'line-width': 0.3,
-          'line-blur': 0.3
+          'line-opacity': 0.3
         }
       })
 

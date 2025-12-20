@@ -8,13 +8,11 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true)
-    // Check localStorage for saved theme
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
     if (savedTheme) {
       setTheme(savedTheme)
       document.documentElement.setAttribute('data-theme', savedTheme)
     } else {
-      // Default to dark mode
       document.documentElement.setAttribute('data-theme', 'dark')
     }
   }, [])
@@ -26,7 +24,6 @@ export default function ThemeToggle() {
     localStorage.setItem('theme', newTheme)
   }
 
-  // Prevent hydration mismatch
   if (!mounted) {
     return <div className="h-10 w-32"></div>
   }

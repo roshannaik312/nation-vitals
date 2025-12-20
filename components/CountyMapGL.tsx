@@ -24,23 +24,22 @@ export default function CountyMapGL() {
   const [hoveredCounty, setHoveredCounty] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  // Load county data
   useEffect(() => {
     fetch('/data/county_data.json')
       .then(r => r.json())
       .then((data: CountyData[]) => {
         const dataMap: Record<string, CountyData> = {}
-        data.forEach(county => {
+        for (let i = 0; i < data.length; i++) {
+          const county = data[i]
           if (county.fips && county.fips !== '0') {
             dataMap[county.fips] = county
           }
-        })
+        }
         setCountyData(dataMap)
         setLoading(false)
       })
   }, [])
 
-  // Initialize map
   useEffect(() => {
     if (!mapContainer.current || map.current) return
 
@@ -76,7 +75,6 @@ export default function CountyMapGL() {
     }
   }, [])
 
-  // Load GeoJSON and add county layer
   useEffect(() => {
     if (!map.current || loading || Object.keys(countyData).length === 0) return
 
@@ -102,18 +100,20 @@ export default function CountyMapGL() {
             source: 'counties',
             paint: {
               'fill-color': '#94a3b8',
-              'fill-opacity': 0.7
+              'fill-opacity': 1,
+              'fill-antialias': true,
+              'fill-outline-color': '#94a3b8'
             }
           })
 
-          // Add outline layer
           map.current.addLayer({
             id: 'counties-outline',
             type: 'line',
             source: 'counties',
             paint: {
-              'line-color': '#64748b',
-              'line-width': 0.5
+              'line-color': '#ffffff',
+              'line-width': 0.5,
+              'line-opacity': 0.3
             }
           })
 
@@ -122,7 +122,6 @@ export default function CountyMapGL() {
     })
   }, [loading, countyData])
 
-  // Update map colors when metric changes
   useEffect(() => {
     updateMapColors()
   }, [metric, countyData])
@@ -131,7 +130,6 @@ export default function CountyMapGL() {
     if (value === null) return '#e5e7eb'
 
     if (isPolitic) {
-      // Republican margin coloring
       if (value > 40) return '#7f1d1d'
       if (value > 20) return '#dc2626'
       if (value > 0) return '#fca5a5'
@@ -139,7 +137,6 @@ export default function CountyMapGL() {
       if (value > -40) return '#2563eb'
       return '#1e3a8a'
     } else {
-      // Drug death rate coloring
       if (value > 40) return '#7f1d1d'
       if (value > 30) return '#dc2626'
       if (value > 20) return '#f97316'
@@ -153,18 +150,28 @@ export default function CountyMapGL() {
 
     const fillExpression: any[] = ['match', ['get', 'GEOID']]
 
-    Object.entries(countyData).forEach(([fips, data]) => {
-      const value = metric === 'drugDeaths' ? data.DrugDeathRate : data.RepublicanMargin
-      const color = getColorForValue(value, metric === 'republicanMargin')
+    const entries = Object.entries(countyData)
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i]
+      const fips = entry[0]
+      const data = entry[1] as CountyData
+      let value
+      if (metric === 'drugDeaths') {
+        value = data.DrugDeathRate
+      } else {
+        value = data.RepublicanMargin
+      }
+      const isPolitical = metric === 'republicanMargin'
+      const color = getColorForValue(value, isPolitical)
       fillExpression.push(fips, color)
-    })
+    }
 
-    fillExpression.push('#e5e7eb') // default color
+    fillExpression.push('#e5e7eb')
 
     map.current.setPaintProperty('counties-fill', 'fill-color', fillExpression)
+    map.current.setPaintProperty('counties-fill', 'fill-outline-color', fillExpression)
   }
 
-  // Add hover interactions
   useEffect(() => {
     if (!map.current) return
 
@@ -219,7 +226,6 @@ export default function CountyMapGL() {
 
   return (
     <div className="space-y-4">
-      {/* Controls */}
       <div className="flex gap-4 items-center">
         <label className="font-semibold">View:</label>
         <button
@@ -244,7 +250,6 @@ export default function CountyMapGL() {
         </button>
       </div>
 
-      {/* Legend */}
       <div className="bg-white p-4 rounded-lg shadow">
         <h4 className="font-semibold mb-2">
           {metric === 'drugDeaths' ? 'Drug Death Rate (per 100k)' : 'Republican Margin (%)'}
@@ -304,11 +309,9 @@ export default function CountyMapGL() {
         </div>
       </div>
 
-      {/* Map Container */}
       <div className="relative">
         <div ref={mapContainer} className="h-[600px] rounded-lg shadow-lg" />
 
-        {/* Hover Tooltip */}
         {hoveredCounty && (
           <div className="absolute top-4 right-4 bg-white p-4 rounded-lg shadow-xl max-w-xs z-10">
             <h3 className="font-bold text-lg mb-2">{hoveredCounty.name} County</h3>
