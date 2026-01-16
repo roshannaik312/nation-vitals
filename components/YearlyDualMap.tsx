@@ -66,6 +66,7 @@ export default function YearlyDualMap() {
   const countyCentersRef = useRef<Record<string, [number, number]>>({})
   const yearlyDataRef = useRef<Record<string, Record<string, CountyData>>>({})
   const selectedYearRef = useRef<string>(selectedYear)
+  const lastMarkerModeRef = useRef<'state' | 'county' | null>(null)
 
   const years = ['2018', '2019', '2020', '2021', '2022', '2023']
 
@@ -656,9 +657,9 @@ export default function YearlyDualMap() {
         : null
 
       setHoveredCounty({
+        ...countyData,
         fips: normalizedFips,
         name: fipsToName[normalizedFips],
-        ...countyData,
         percentile
       })
     }
@@ -984,9 +985,9 @@ export default function YearlyDualMap() {
               : null
 
             setHoveredCounty({
+              ...data,
               fips,
               name: countyName,
-              ...data,
               percentile
             })
             newMap.getCanvas().style.cursor = 'pointer'
