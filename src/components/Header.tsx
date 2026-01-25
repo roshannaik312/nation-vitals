@@ -50,7 +50,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <img
-            src="./nationvitals_logo.png"
+            src="/nationvitals_logo.png"
             alt="NationVitals"
             className="w-8 h-8 rounded-lg"
           />
