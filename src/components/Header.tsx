@@ -1,4 +1,4 @@
-import { Activity, BarChart3, GitCompare, Info, Database, Moon, Sun } from 'lucide-react';
+import { BarChart3, GitCompare, Info, Database, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 
@@ -25,7 +25,6 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
     }
   }, [isDark]);
 
-  // Initialize from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('theme');
     if (saved === 'dark') {
@@ -38,7 +37,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   }, []);
 
   const tabs = [
-    { id: 'map' as const, label: 'Map', icon: Activity },
+    { id: 'map' as const, label: 'Map', icon: BarChart3 },
     { id: 'compare' as const, label: 'Compare', icon: GitCompare },
     { id: 'analysis' as const, label: 'Analysis', icon: BarChart3 },
     { id: 'about' as const, label: 'About', icon: Info },
@@ -50,14 +49,14 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
       <div className="h-full max-w-[1800px] mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Activity className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-foreground tracking-tight">
-              NationVitals
-            </h1>
-          </div>
+          <img
+            src="./nationvitals_logo.png"
+            alt="NationVitals"
+            className="w-8 h-8 rounded-lg"
+          />
+          <h1 className="text-lg font-bold text-foreground tracking-tight">
+            County Intelligence for the Fentanyl Crisis
+          </h1>
         </div>
 
         {/* Navigation */}
@@ -77,7 +76,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </Button>
             );
           })}
-          
+
           {/* Dark Mode Toggle */}
           <Button
             variant="ghost"
