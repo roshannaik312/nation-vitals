@@ -1,10 +1,10 @@
-import { Activity, BarChart3, GitCompare, Info, Database, Moon, Sun } from 'lucide-react';
+import { Activity, BarChart3, Info, Database, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 
 interface HeaderProps {
-  activeTab: 'map' | 'compare' | 'analysis' | 'about' | 'data';
-  onTabChange: (tab: 'map' | 'compare' | 'analysis' | 'about' | 'data') => void;
+  activeTab: 'map' | 'analysis' | 'about' | 'data';
+  onTabChange: (tab: 'map' | 'analysis' | 'about' | 'data') => void;
 }
 
 export function Header({ activeTab, onTabChange }: HeaderProps) {
@@ -39,7 +39,6 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
 
   const tabs = [
     { id: 'map' as const, label: 'Map', icon: Activity },
-    { id: 'compare' as const, label: 'Compare', icon: GitCompare },
     { id: 'analysis' as const, label: 'Analysis', icon: BarChart3 },
     { id: 'about' as const, label: 'About', icon: Info },
     { id: 'data' as const, label: 'Data Sources', icon: Database },

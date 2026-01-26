@@ -6,6 +6,6 @@ export const MAP_STYLE = 'mapbox://styles/mapbox/light-v11';
 export const MAP_DARK_STYLE = 'mapbox://styles/mapbox/dark-v11';
 
 export const DEFAULT_CENTER: [number, number] = [-98.5795, 39.8283]; // Center of US
-export const DEFAULT_ZOOM = 2.8;
+export const DEFAULT_ZOOM = 3.8; // More zoomed in to US mainland
 export const MIN_ZOOM = 2;
 export const MAX_ZOOM = 12;

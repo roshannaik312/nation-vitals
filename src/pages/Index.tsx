@@ -19,7 +19,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { GitCompare } from 'lucide-react';
 
-type TabType = 'map' | 'compare' | 'analysis' | 'about' | 'data';
+type TabType = 'map' | 'analysis' | 'about' | 'data';
 
 export default function Index() {
   const [activeTab, setActiveTab] = useState<TabType>('map');
@@ -83,8 +83,8 @@ export default function Index() {
                 {/* Compare Button - Top Right */}
                 <Button 
                   onClick={() => setCompareSidebarOpen(true)}
-                  variant={compareCounties.length > 0 ? "default" : "outline"}
-                  className="gap-2"
+                  variant="default"
+                  className="gap-2 bg-primary hover:bg-primary/90"
                 >
                   <GitCompare className="w-4 h-4" />
                   Compare ({compareCounties.length}/5)

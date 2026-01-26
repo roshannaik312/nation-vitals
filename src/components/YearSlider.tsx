@@ -75,11 +75,11 @@ export function YearSlider({ selectedYear, onYearChange }: YearSliderProps) {
             className="w-full"
           />
 
-          <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="flex justify-between text-xs text-muted-foreground gap-1">
             {YEARS.map((year) => (
               <span
                 key={year}
-                className={year === selectedYear ? 'text-primary font-medium' : ''}
+                className={`flex-1 text-center ${year === selectedYear ? 'text-primary font-medium' : ''}`}
               >
                 {year}
               </span>

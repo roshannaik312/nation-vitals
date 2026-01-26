@@ -56,12 +56,21 @@ export function CompareSidebar({
 
   const availableCounties = useMemo(() => {
     if (!data || !data[year.toString()]) return [];
-    return Object.entries(data[year.toString()]).map(([fips, countyData]) => ({
-      fips,
-      name: countyData.county,
-      state: countyData.state,
-      data: countyData,
-    }));
+    return Object.entries(data[year.toString()])
+      .filter(([fips, countyData]) => {
+        // Filter out blank entries and "County 000" type entries
+        const countyName = countyData.county?.trim() || '';
+        return countyName && 
+               countyName.length > 0 &&
+               !countyName.toLowerCase().includes('county 000') &&
+               !countyName.toLowerCase().match(/^county \d+$/); // Filter out "County 123" patterns
+      })
+      .map(([fips, countyData]) => ({
+        fips,
+        name: countyData.county,
+        state: countyData.state,
+        data: countyData,
+      }));
   }, [data, year]);
 
   const filteredCounties = useMemo(() => {
@@ -197,50 +206,7 @@ export function CompareSidebar({
                 ))}
               </div>
 
-              {/* Summary Cards */}
-              <div className="grid grid-cols-1 gap-4">
-                {counties.map((county, idx) => (
-                  <Card key={county.fips} style={{ borderTopColor: CHART_COLORS[idx], borderTopWidth: 3 }}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg flex items-center justify-between">
-                        <span>{county.data.county}</span>
-                        <Badge variant="outline" className="capitalize">{county.data.urban_rural}</Badge>
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">{county.data.state}</p>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Population</p>
-                          <p className="text-lg font-semibold">{county.data.population.toLocaleString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Median Income</p>
-                          <p className="text-lg font-semibold">${(county.data.median_income / 1000).toFixed(0)}k</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Overdose Rate</p>
-                          <p className="text-lg font-semibold">
-                            {county.data.overdose_rate === 0 ? (
-                              <span className="text-xs text-muted-foreground">Below 10, deaths suppressed by CDC WONDER</span>
-                            ) : (
-                              county.data.overdose_rate.toFixed(1)
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Political Share</p>
-                          <p className="text-lg font-semibold" style={{ color: county.data.vote_share_rep > 50 ? '#dc2626' : '#2563eb' }}>
-                            {county.data.vote_share_rep > 50 ? 'R' : 'D'} +{Math.abs(county.data.vote_share_rep - 50).toFixed(0)}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Trend Charts */}
+              {/* Trend Charts - Graphs First */}
               <div className="space-y-6">
                 {/* Overdose Rate Trend */}
                 <Card>
@@ -350,6 +316,49 @@ export function CompareSidebar({
                     </div>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Summary Cards - Info Boxes Last */}
+              <div className="grid grid-cols-1 gap-4">
+                {counties.map((county, idx) => (
+                  <Card key={county.fips} style={{ borderTopColor: CHART_COLORS[idx], borderTopWidth: 3 }}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex items-center justify-between">
+                        <span>{county.data.county}</span>
+                        <Badge variant="outline" className="capitalize">{county.data.urban_rural}</Badge>
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground">{county.data.state}</p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Population</p>
+                          <p className="text-lg font-semibold">{county.data.population.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Median Income</p>
+                          <p className="text-lg font-semibold">${(county.data.median_income / 1000).toFixed(0)}k</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Overdose Rate</p>
+                          <p className="text-lg font-semibold">
+                            {county.data.overdose_rate === 0 ? (
+                              <span className="text-xs text-muted-foreground">Below 10, deaths suppressed by CDC WONDER</span>
+                            ) : (
+                              county.data.overdose_rate.toFixed(1)
+                            )}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Political Share</p>
+                          <p className="text-lg font-semibold" style={{ color: county.data.vote_share_rep > 50 ? '#dc2626' : '#2563eb' }}>
+                            {county.data.vote_share_rep > 50 ? 'R' : 'D'} +{Math.abs(county.data.vote_share_rep - 50).toFixed(0)}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
 
               {/* Detailed Comparison Table */}

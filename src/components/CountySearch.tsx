@@ -17,12 +17,21 @@ export function CountySearch({ data, year, onSelectCounty }: CountySearchProps) 
 
   const counties = useMemo(() => {
     if (!data || !data[year.toString()]) return [];
-    return Object.entries(data[year.toString()]).map(([fips, countyData]) => ({
-      fips,
-      name: countyData.county,
-      state: countyData.state,
-      data: countyData,
-    }));
+    return Object.entries(data[year.toString()])
+      .filter(([fips, countyData]) => {
+        // Filter out blank entries and "County 000" type entries
+        const countyName = countyData.county?.trim() || '';
+        return countyName && 
+               countyName.length > 0 &&
+               !countyName.toLowerCase().includes('county 000') &&
+               !countyName.toLowerCase().match(/^county \d+$/); // Filter out "County 123" patterns
+      })
+      .map(([fips, countyData]) => ({
+        fips,
+        name: countyData.county,
+        state: countyData.state,
+        data: countyData,
+      }));
   }, [data, year]);
 
   const filteredCounties = useMemo(() => {
