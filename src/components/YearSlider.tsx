@@ -43,25 +43,25 @@ export function YearSlider({ selectedYear, onYearChange }: YearSliderProps) {
   };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-      <div className="flex items-center gap-4">
+    <div className="bg-card border border-border rounded-xl p-2 sm:p-4 shadow-sm">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Button
           variant="outline"
           size="icon"
           onClick={togglePlay}
-          className="shrink-0"
+          className="shrink-0 h-8 w-8 sm:h-10 sm:w-10"
         >
           {isPlaying ? (
-            <Pause className="w-4 h-4" />
+            <Pause className="w-3 h-3 sm:w-4 sm:h-4" />
           ) : (
-            <Play className="w-4 h-4" />
+            <Play className="w-3 h-3 sm:w-4 sm:h-4" />
           )}
         </Button>
 
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-1 sm:space-y-2 min-w-0">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-muted-foreground">Year</span>
-            <span className="text-2xl font-bold text-foreground tabular-nums">
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground">Year</span>
+            <span className="text-xl sm:text-2xl font-bold text-foreground tabular-nums">
               {selectedYear}
             </span>
           </div>
@@ -75,7 +75,7 @@ export function YearSlider({ selectedYear, onYearChange }: YearSliderProps) {
             className="w-full"
           />
 
-          <div className="flex justify-between text-xs text-muted-foreground gap-1">
+          <div className="flex justify-between text-[10px] sm:text-xs text-muted-foreground gap-0.5 sm:gap-1">
             {YEARS.map((year) => (
               <span
                 key={year}

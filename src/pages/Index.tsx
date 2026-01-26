@@ -58,21 +58,27 @@ export default function Index() {
         {activeTab === 'map' && (
           <div className="flex flex-col">
             {/* Map Section - Two Maps Side by Side */}
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               {/* Top Controls */}
-              <div className="flex flex-wrap items-center gap-4 p-4 pb-0 justify-between">
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="w-64">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 p-2 sm:p-4 pb-0 justify-between">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                  <div className="w-full sm:w-64 flex-shrink-0 relative">
                     <CountySearch 
                       data={data} 
                       year={selectedYear} 
                       onSelectCounty={handleCountySelect}
                     />
+                    {/* Hold Constant - Overlay below search */}
+                    <div className="absolute top-full left-0 mt-1 z-20 w-full sm:w-auto">
+                      <FilterControls filters={filters} onFiltersChange={setFilters} />
+                    </div>
                   </div>
-                  <MetricSelector
-                    selectedMetric={selectedMetric}
-                    onMetricChange={setSelectedMetric}
-                  />
+                  <div className="hidden sm:block">
+                    <MetricSelector
+                      selectedMetric={selectedMetric}
+                      onMetricChange={setSelectedMetric}
+                    />
+                  </div>
                   <div className="flex-1 min-w-[200px] max-w-md">
                     <YearSlider
                       selectedYear={selectedYear}
@@ -84,15 +90,16 @@ export default function Index() {
                 <Button 
                   onClick={() => setCompareSidebarOpen(true)}
                   variant="default"
-                  className="gap-2 bg-primary hover:bg-primary/90"
+                  className="gap-2 bg-primary hover:bg-primary/90 w-full sm:w-auto shrink-0"
                 >
                   <GitCompare className="w-4 h-4" />
-                  Compare ({compareCounties.length}/5)
+                  <span className="hidden sm:inline">Compare </span>
+                  ({compareCounties.length}/5)
                 </Button>
               </div>
 
               {/* Maps Container - 1:2 height:width ratio (height is half of width) */}
-              <div className="flex gap-4 p-4" style={{ aspectRatio: '2/1', maxHeight: 'calc(100vh - 20rem)' }}>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 p-2 sm:p-4" style={{ aspectRatio: '2/1', maxHeight: 'calc(100vh - 20rem)' }}>
                 {/* Health Metric Map */}
                 <div className="flex-1 min-w-0">
                   {error ? (
@@ -140,16 +147,11 @@ export default function Index() {
               </div>
             </div>
             
-            {/* County Panel and Filters Below Map */}
-            <div className="border-t border-border p-4 bg-card/50">
-              <div className="flex gap-4 flex-wrap">
-                {/* Filters */}
-                <div className="w-64">
-                  <FilterControls filters={filters} onFiltersChange={setFilters} />
-                </div>
-                
+            {/* County Panel Below Map */}
+            <div className="border-t border-border p-2 sm:p-4 bg-card/50">
+              <div className="flex gap-2 sm:gap-4">
                 {/* County Details */}
-                <div className="flex-1 min-w-[300px]">
+                <div className="flex-1 min-w-0">
                   <CountyPanel
                     county={hoveredCounty || selectedCounty}
                     selectedMetric={selectedMetric}
@@ -161,7 +163,7 @@ export default function Index() {
             </div>
             
             {/* State Summary Table */}
-            <div className="p-6 border-t border-border">
+            <div className="p-2 sm:p-6 border-t border-border overflow-x-auto">
               <StateSummaryTable 
                 selectedState={selectedState}
                 onStateSelect={setSelectedState}

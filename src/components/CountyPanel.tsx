@@ -47,23 +47,46 @@ export function CountyPanel({
     { label: 'Asian', value: data.pct_asian },
   ];
 
+  const getUrbanRuralColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'urban': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+      case 'suburban': return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+      case 'rural': return 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300';
+      default: return 'bg-muted text-muted-foreground';
+    }
+  };
+
   return (
     <Card className="shadow-sm">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div>
-            <CardTitle className="text-lg">{data.county}</CardTitle>
-            <p className="text-sm text-muted-foreground">{data.state}</p>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <CardTitle className="text-lg">{data.county}</CardTitle>
+              <Badge className={`capitalize ${getUrbanRuralColor(data.urban_rural)}`}>
+                {data.urban_rural}
+              </Badge>
+              <Badge variant="outline" className="bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                {selectedYear}
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">{data.state}</p>
+            {/* Political Share - Right beside name on top */}
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-xs text-muted-foreground">Political Share:</span>
+              <span 
+                className={`text-sm font-semibold ${data.vote_share_rep > 50 ? 'text-red-600' : 'text-blue-600'}`}
+              >
+                {data.vote_share_rep > 50 ? 'R' : 'D'} +{Math.abs(data.vote_share_rep - 50).toFixed(0)}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                ({data.vote_share_rep.toFixed(0)}%)
+              </span>
+            </div>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
+          <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0">
             <X className="w-4 h-4" />
           </Button>
-        </div>
-        <div className="flex gap-2 mt-2">
-          <Badge variant="secondary" className="capitalize">
-            {data.urban_rural}
-          </Badge>
-          <Badge variant="outline">{selectedYear}</Badge>
         </div>
       </CardHeader>
 
@@ -80,14 +103,24 @@ export function CountyPanel({
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          {stats.map((stat) => (
-            <div key={stat.label}>
-              <p className="text-xs text-muted-foreground">{stat.label}</p>
-              <p className="text-sm font-medium">{stat.value}</p>
-            </div>
-          ))}
+        {/* Quick Stats - All in one line */}
+        <div className="flex flex-wrap gap-4 text-sm">
+          <div>
+            <span className="text-muted-foreground">Population: </span>
+            <span className="font-medium">{data.population.toLocaleString()}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Income: </span>
+            <span className="font-medium">${(data.median_income / 1000).toFixed(0)}k</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Poverty: </span>
+            <span className="font-medium">{data.poverty_rate.toFixed(1)}%</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">College: </span>
+            <span className="font-medium">{data.pct_college.toFixed(1)}%</span>
+          </div>
         </div>
 
         {/* Demographics */}
@@ -108,28 +141,6 @@ export function CountyPanel({
             ))}
           </div>
         </div>
-
-        {/* Political Share */}
-        <div className="bg-muted/50 rounded-lg p-3">
-          <p className="text-xs text-muted-foreground mb-2">Political Share</p>
-          <div className="flex items-center gap-2">
-            <div 
-              className="h-3 flex-1 rounded-full overflow-hidden flex"
-              style={{ background: 'linear-gradient(to right, hsl(215 85% 55%), hsl(0 75% 50%))' }}
-            >
-              <div 
-                className="h-full bg-transparent"
-                style={{ width: `${data.vote_share_dem}%` }}
-              />
-              <div className="w-0.5 h-full bg-white" />
-            </div>
-          </div>
-          <div className="flex justify-between text-xs mt-1">
-            <span className="text-blue-600">D {data.vote_share_dem.toFixed(0)}%</span>
-            <span className="text-red-600">R {data.vote_share_rep.toFixed(0)}%</span>
-          </div>
-        </div>
-
       </CardContent>
     </Card>
   );

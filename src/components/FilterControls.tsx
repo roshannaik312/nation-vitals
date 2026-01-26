@@ -44,7 +44,7 @@ export function FilterControls({ filters, onFiltersChange }: FilterControlsProps
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 w-full justify-between">
+        <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto justify-between bg-card/95 backdrop-blur-sm shadow-md">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-4 h-4" />
             <span>Hold Constant</span>
@@ -63,11 +63,11 @@ export function FilterControls({ filters, onFiltersChange }: FilterControlsProps
       </CollapsibleTrigger>
       
       <CollapsibleContent>
-        <div className="mt-3 p-3 bg-muted/50 rounded-lg space-y-3">
+        <div className="mt-2 p-3 bg-card/95 backdrop-blur-sm rounded-lg space-y-3 shadow-lg border border-border">
           <p className="text-xs text-muted-foreground">
             Adjust visualizations to control for confounding variables:
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {filterOptions.map((option) => (
               <div key={option.key} className="flex items-center space-x-2">
                 <Checkbox

@@ -60,7 +60,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-1 overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -69,7 +69,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 variant={activeTab === tab.id ? 'secondary' : 'ghost'}
                 size="sm"
                 onClick={() => onTabChange(tab.id)}
-                className="gap-2"
+                className="gap-1 sm:gap-2 shrink-0"
               >
                 <Icon className="w-4 h-4" />
                 <span className="hidden sm:inline">{tab.label}</span>

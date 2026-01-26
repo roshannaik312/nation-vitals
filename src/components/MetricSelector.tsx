@@ -17,8 +17,8 @@ const METRIC_ICONS: Record<MetricType, React.ComponentType<{ className?: string 
 
 export function MetricSelector({ selectedMetric, onMetricChange }: MetricSelectorProps) {
   return (
-    <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-      <h3 className="text-sm font-medium text-muted-foreground mb-3">Select Metric</h3>
+    <div className="bg-card border border-border rounded-xl p-2 sm:p-4 shadow-sm">
+      <h3 className="text-xs sm:text-sm font-medium text-muted-foreground mb-2 sm:mb-3">Select Metric</h3>
       <div className="grid grid-cols-2 gap-2">
         {AVAILABLE_METRICS.map((metricId) => {
           const metric = METRICS[metricId];
@@ -31,10 +31,10 @@ export function MetricSelector({ selectedMetric, onMetricChange }: MetricSelecto
               variant={isSelected ? 'default' : 'outline'}
               size="sm"
               onClick={() => onMetricChange(metricId)}
-              className="justify-start gap-2 h-auto py-2 px-3"
+              className="justify-start gap-1 sm:gap-2 h-auto py-1.5 sm:py-2 px-2 sm:px-3"
             >
-              <Icon className="w-4 h-4 shrink-0" />
-              <span className="text-xs leading-tight text-left">
+              <Icon className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+              <span className="text-[10px] sm:text-xs leading-tight text-left">
                 {metric.label}
               </span>
             </Button>
