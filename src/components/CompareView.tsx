@@ -246,7 +246,7 @@ export function CompareView({ counties, data, onRemove, onClear }: CompareViewPr
         {/* Political Trend */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Republican Vote Share Trend</CardTitle>
+            <CardTitle className="text-base">Political Share Trend</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-64">
@@ -394,7 +394,7 @@ export function CompareView({ counties, data, onRemove, onClear }: CompareViewPr
                   )}
                 </tr>
                 <tr>
-                  <td className="py-2 text-muted-foreground">Republican Vote Share</td>
+                  <td className="py-2 text-muted-foreground">Political Share</td>
                   {counties.map((c) => (
                     <td key={c.fips} className="text-right py-2 font-medium">{c.data.vote_share_rep.toFixed(1)}%</td>
                   ))}

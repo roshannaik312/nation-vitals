@@ -256,6 +256,9 @@ export function MapView({
       if (countyData && popup.current) {
         const metric = METRICS[selectedMetric];
         const value = countyData[selectedMetric];
+        const displayValue = (selectedMetric === 'overdose_rate' && value === 0) 
+          ? '<span class="text-xs text-muted-foreground">Below 10, deaths suppressed by CDC WONDER</span>'
+          : `<span class="font-semibold text-sm text-foreground">${metric.format(value)}</span>`;
         
         popup.current
           .setLngLat(e.lngLat)
@@ -266,7 +269,7 @@ export function MapView({
               <div class="space-y-1">
                 <div class="flex justify-between items-center">
                   <span class="text-xs text-muted-foreground">${metric.label}</span>
-                  <span class="font-semibold text-sm text-foreground">${metric.format(value)}</span>
+                  ${displayValue}
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-xs text-muted-foreground">Population</span>

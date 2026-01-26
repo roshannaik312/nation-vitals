@@ -76,7 +76,11 @@ export function CountyPanel({
         <div className="bg-muted/50 rounded-lg p-4">
           <p className="text-xs text-muted-foreground mb-1">{metric.label}</p>
           <p className="text-3xl font-bold text-foreground">
-            {metric.format(metricValue)}
+            {selectedMetric === 'overdose_rate' && metricValue === 0 ? (
+              <span className="text-sm text-muted-foreground">Below 10, deaths suppressed by CDC WONDER</span>
+            ) : (
+              metric.format(metricValue)
+            )}
           </p>
         </div>
 
@@ -109,9 +113,9 @@ export function CountyPanel({
           </div>
         </div>
 
-        {/* Political Lean */}
+        {/* Political Share */}
         <div className="bg-muted/50 rounded-lg p-3">
-          <p className="text-xs text-muted-foreground mb-2">Political Lean</p>
+          <p className="text-xs text-muted-foreground mb-2">Political Share</p>
           <div className="flex items-center gap-2">
             <div 
               className="h-3 flex-1 rounded-full overflow-hidden flex"
@@ -134,10 +138,10 @@ export function CountyPanel({
         <Button 
           onClick={() => onAddToCompare(county)} 
           className="w-full gap-2"
-          disabled={compareCount >= 2}
+          disabled={compareCount >= 5}
         >
           <GitCompare className="w-4 h-4" />
-          {compareCount >= 2 ? 'Compare List Full' : 'Add to Compare'}
+          {compareCount >= 5 ? 'Compare List Full (5/5)' : `Add to Compare (${compareCount}/5)`}
         </Button>
       </CardContent>
     </Card>

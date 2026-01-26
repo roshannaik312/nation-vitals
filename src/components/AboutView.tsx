@@ -12,7 +12,7 @@ export function AboutView() {
           Tracking America's Health Crisis, County by County
         </p>
         <p className="text-muted-foreground mt-4">
-          An interactive platform exploring drug overdoses, mental health, and suicide—and how they 
+          An interactive platform exploring drug overdoses, mental health—and how they 
           connect to politics, poverty, and community factors.
         </p>
         <Badge variant="outline" className="mt-4">

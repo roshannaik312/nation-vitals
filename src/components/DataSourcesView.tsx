@@ -14,8 +14,8 @@ interface DataSource {
 const DATA_SOURCES: DataSource[] = [
   {
     name: 'CDC WONDER',
-    description: 'Multiple Cause of Death Files - Provides county-level mortality counts for drug overdoses and suicides.',
-    variables: ['Drug overdose deaths', 'Suicide deaths', 'Age-adjusted mortality rates'],
+    description: 'Multiple Cause of Death Files - Provides county-level mortality counts for drug overdoses.',
+    variables: ['Drug overdose deaths', 'Age-adjusted mortality rates'],
     url: 'https://wonder.cdc.gov',
     years: '2018-2023',
     icon: 'database',
@@ -31,7 +31,7 @@ const DATA_SOURCES: DataSource[] = [
   {
     name: 'MIT Election Data + Science Lab',
     description: 'County-level presidential election returns with validated vote counts.',
-    variables: ['Republican vote share', 'Democrat vote share', 'Total votes'],
+    variables: ['Political share', 'Vote share', 'Total votes'],
     url: 'https://electionlab.mit.edu',
     years: '2000-2024',
     icon: 'file',

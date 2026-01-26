@@ -6,7 +6,7 @@ import { YearSlider } from '@/components/YearSlider';
 import { MetricSelector } from '@/components/MetricSelector';
 import { CountyPanel } from '@/components/CountyPanel';
 import { CountySearch } from '@/components/CountySearch';
-import { CompareView } from '@/components/CompareView';
+import { CompareSidebar } from '@/components/CompareSidebar';
 import { AnalysisView } from '@/components/AnalysisView';
 import { AboutView } from '@/components/AboutView';
 import { DataSourcesView } from '@/components/DataSourcesView';
@@ -16,6 +16,8 @@ import { useMapData } from '@/hooks/useMapData';
 import { useCountyData } from '@/hooks/useCountyData';
 import { SelectedCounty } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { GitCompare } from 'lucide-react';
 
 type TabType = 'map' | 'compare' | 'analysis' | 'about' | 'data';
 
@@ -23,6 +25,7 @@ export default function Index() {
   const [activeTab, setActiveTab] = useState<TabType>('map');
   const [filters, setFilters] = useState<FilterState>(defaultFilters);
   const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [compareSidebarOpen, setCompareSidebarOpen] = useState(false);
   
   const { data, loading, error } = useCountyData();
   const {
@@ -42,10 +45,7 @@ export default function Index() {
 
   const handleAddToCompare = (county: SelectedCounty) => {
     addToCompare(county);
-    // Auto-switch to compare tab when second county is added
-    if (compareCounties.length >= 1) {
-      setActiveTab('compare');
-    }
+    setCompareSidebarOpen(true);
   };
 
   const handleCountySelect = (county: SelectedCounty | null) => {
@@ -144,7 +144,7 @@ export default function Index() {
                 {/* County Details */}
                 <div className="flex-1 min-w-[300px]">
                   <CountyPanel
-                    county={selectedCounty}
+                    county={hoveredCounty || selectedCounty}
                     selectedMetric={selectedMetric}
                     selectedYear={selectedYear}
                     onClose={() => setSelectedCounty(null)}
@@ -153,30 +153,17 @@ export default function Index() {
                   />
                 </div>
                 
-                {/* Compare Queue */}
-                {compareCounties.length > 0 && (
-                  <div className="w-64 bg-muted/50 rounded-lg p-3">
-                    <p className="text-xs text-muted-foreground mb-2">
-                      Compare Queue ({compareCounties.length}/2)
-                    </p>
-                    <div className="space-y-1">
-                      {compareCounties.map((c) => (
-                        <div 
-                          key={c.fips} 
-                          className="flex items-center justify-between text-sm bg-background rounded px-2 py-1"
-                        >
-                          <span>{c.data.county}, {c.data.state}</span>
-                          <button 
-                            onClick={() => removeFromCompare(c.fips)}
-                            className="text-muted-foreground hover:text-foreground"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* Compare Button */}
+                <div className="w-64">
+                  <Button 
+                    onClick={() => setCompareSidebarOpen(true)}
+                    className="w-full gap-2"
+                    variant={compareCounties.length > 0 ? "default" : "outline"}
+                  >
+                    <GitCompare className="w-4 h-4" />
+                    Compare ({compareCounties.length}/5)
+                  </Button>
+                </div>
               </div>
             </div>
             
@@ -190,16 +177,6 @@ export default function Index() {
           </div>
         )}
 
-        {activeTab === 'compare' && (
-          <div className="container max-w-7xl mx-auto py-6 px-4">
-            <CompareView
-              counties={compareCounties}
-              data={data}
-              onRemove={removeFromCompare}
-              onClear={clearCompare}
-            />
-          </div>
-        )}
 
         {activeTab === 'analysis' && (
           <div className="container max-w-7xl mx-auto py-6 px-4">
@@ -222,6 +199,18 @@ export default function Index() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Compare Sidebar */}
+      <CompareSidebar
+        open={compareSidebarOpen}
+        onOpenChange={setCompareSidebarOpen}
+        counties={compareCounties}
+        data={data}
+        year={selectedYear}
+        onRemove={removeFromCompare}
+        onClear={clearCompare}
+        onAddCounty={addToCompare}
+      />
     </div>
   );
 }

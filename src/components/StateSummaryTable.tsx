@@ -153,8 +153,8 @@ export function StateSummaryTable({ selectedState, onStateSelect }: StateSummary
   const getPoliticalLabel = (margin: number | null): { label: string; color: string } => {
     if (margin === null) return { label: 'N/A', color: 'text-muted-foreground' };
     // Positive margin = Republican, Negative = Democrat
-    if (margin > 0) return { label: 'Republican', color: 'text-red-500' };
-    return { label: 'Democrat', color: 'text-blue-500' };
+    if (margin > 0) return { label: 'R+', color: 'text-red-500' };
+    return { label: 'D+', color: 'text-blue-500' };
   };
 
   const SortIcon = ({ field }: { field: SortField }) => {

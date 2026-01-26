@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { MetricType } from '@/types';
 import { METRICS, AVAILABLE_METRICS } from '@/data/metrics';
-import { Activity, Brain, Vote, Skull } from 'lucide-react';
+import { Brain, Vote, Skull } from 'lucide-react';
 
 interface MetricSelectorProps {
   selectedMetric: MetricType;
@@ -10,7 +10,7 @@ interface MetricSelectorProps {
 
 const METRIC_ICONS: Record<MetricType, React.ComponentType<{ className?: string }>> = {
   overdose_rate: Skull,
-  suicide_rate: Activity,
+  suicide_rate: Skull,
   mental_health_days: Brain,
   vote_share_rep: Vote,
 };

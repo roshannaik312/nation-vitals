@@ -311,8 +311,8 @@ export function AnalysisView() {
           <h4>Interpretation</h4>
           <p>
             Coefficients are expressed as percentage change in expected deaths for a one-unit increase in the predictor. 
-            For example, a -0.71% effect for Republican Margin means that counties with 1 percentage point higher 
-            Republican vote share have 0.71% fewer drug deaths, holding all other factors constant.
+            For example, a -0.71% effect for Political Margin means that counties with 1 percentage point higher 
+            political share have 0.71% fewer drug deaths, holding all other factors constant.
           </p>
           <h4>Limitations</h4>
           <p>
@@ -327,7 +327,7 @@ export function AnalysisView() {
 
 function formatVarName(name: string): string {
   const mappings: Record<string, string> = {
-    'RepublicanMargin': 'Republican Margin',
+    'RepublicanMargin': 'Political Margin',
     'UnemploymentRate': 'Unemployment Rate',
     'PovertyRate': 'Poverty Rate',
     'MedianIncome': 'Median Income',

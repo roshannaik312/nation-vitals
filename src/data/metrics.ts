@@ -30,8 +30,8 @@ export const METRICS: Record<MetricType, MetricConfig> = {
   },
   vote_share_rep: {
     id: 'vote_share_rep',
-    label: 'Political Lean',
-    description: 'Republican vote share in presidential elections',
+    label: 'Political Share',
+    description: 'Political share in presidential elections',
     unit: '%',
     colorScale: 'political',
     domain: [0, 100],
@@ -47,5 +47,4 @@ export const YEARS: number[] = [2018, 2019, 2020, 2021, 2022, 2023];
 
 export const AVAILABLE_METRICS: MetricType[] = [
   'overdose_rate',
-  'suicide_rate', 
 ];

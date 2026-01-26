@@ -3,6 +3,7 @@ import { Search, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { AnnualData, SelectedCounty } from '@/types';
+import { fuzzySearch } from '@/lib/fuzzySearch';
 
 interface CountySearchProps {
   data: AnnualData | null;
@@ -26,14 +27,12 @@ export function CountySearch({ data, year, onSelectCounty }: CountySearchProps) 
 
   const filteredCounties = useMemo(() => {
     if (!query.trim()) return [];
-    const lowerQuery = query.toLowerCase();
-    return counties
-      .filter(c => 
-        c.name.toLowerCase().includes(lowerQuery) || 
-        c.state.toLowerCase().includes(lowerQuery) ||
-        `${c.name}, ${c.state}`.toLowerCase().includes(lowerQuery)
-      )
-      .slice(0, 20);
+    return fuzzySearch(
+      counties,
+      query,
+      (c) => `${c.name}, ${c.state}`,
+      20
+    );
   }, [counties, query]);
 
   const handleSelect = useCallback((county: typeof counties[0]) => {

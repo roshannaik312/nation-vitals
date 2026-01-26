@@ -32,8 +32,8 @@ export function useMapData(): UseMapDataReturn {
 
   const addToCompare = useCallback((county: SelectedCounty) => {
     setCompareCounties(prev => {
-      if (prev.length >= 2) {
-        return [prev[1], county];
+      if (prev.length >= 5) {
+        return [prev[1], prev[2], prev[3], prev[4], county];
       }
       if (prev.some(c => c.fips === county.fips)) {
         return prev;
