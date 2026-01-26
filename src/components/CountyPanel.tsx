@@ -1,17 +1,14 @@
 import { SelectedCounty, MetricType } from '@/types';
 import { METRICS } from '@/data/metrics';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { GitCompare, X, TrendingUp, TrendingDown, MapPin } from 'lucide-react';
+import { X, MapPin } from 'lucide-react';
 
 interface CountyPanelProps {
   county: SelectedCounty | null;
   selectedMetric: MetricType;
   selectedYear: number;
   onClose: () => void;
-  onAddToCompare: (county: SelectedCounty) => void;
-  compareCount: number;
 }
 
 export function CountyPanel({
@@ -19,8 +16,6 @@ export function CountyPanel({
   selectedMetric,
   selectedYear,
   onClose,
-  onAddToCompare,
-  compareCount,
 }: CountyPanelProps) {
   if (!county) {
     return (
@@ -134,15 +129,6 @@ export function CountyPanel({
           </div>
         </div>
 
-        {/* Add to Compare Button */}
-        <Button 
-          onClick={() => onAddToCompare(county)} 
-          className="w-full gap-2"
-          disabled={compareCount >= 5}
-        >
-          <GitCompare className="w-4 h-4" />
-          {compareCount >= 5 ? 'Compare List Full (5/5)' : `Add to Compare (${compareCount}/5)`}
-        </Button>
       </CardContent>
     </Card>
   );

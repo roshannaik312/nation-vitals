@@ -43,10 +43,6 @@ export default function Index() {
     clearCompare,
   } = useMapData();
 
-  const handleAddToCompare = (county: SelectedCounty) => {
-    addToCompare(county);
-    setCompareSidebarOpen(true);
-  };
 
   const handleCountySelect = (county: SelectedCounty | null) => {
     setSelectedCounty(county);
@@ -62,30 +58,41 @@ export default function Index() {
         {activeTab === 'map' && (
           <div className="flex flex-col">
             {/* Map Section - Two Maps Side by Side */}
-            <div className="h-[calc(100vh-3.5rem-3rem)] flex flex-col">
+            <div className="flex flex-col">
               {/* Top Controls */}
-              <div className="flex flex-wrap items-center gap-4 p-4 pb-0">
-                <div className="w-64">
-                  <CountySearch 
-                    data={data} 
-                    year={selectedYear} 
-                    onSelectCounty={handleCountySelect}
+              <div className="flex flex-wrap items-center gap-4 p-4 pb-0 justify-between">
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="w-64">
+                    <CountySearch 
+                      data={data} 
+                      year={selectedYear} 
+                      onSelectCounty={handleCountySelect}
+                    />
+                  </div>
+                  <MetricSelector
+                    selectedMetric={selectedMetric}
+                    onMetricChange={setSelectedMetric}
                   />
+                  <div className="flex-1 min-w-[200px] max-w-md">
+                    <YearSlider
+                      selectedYear={selectedYear}
+                      onYearChange={setSelectedYear}
+                    />
+                  </div>
                 </div>
-                <MetricSelector
-                  selectedMetric={selectedMetric}
-                  onMetricChange={setSelectedMetric}
-                />
-                <div className="flex-1 min-w-[200px] max-w-md">
-                  <YearSlider
-                    selectedYear={selectedYear}
-                    onYearChange={setSelectedYear}
-                  />
-                </div>
+                {/* Compare Button - Top Right */}
+                <Button 
+                  onClick={() => setCompareSidebarOpen(true)}
+                  variant={compareCounties.length > 0 ? "default" : "outline"}
+                  className="gap-2"
+                >
+                  <GitCompare className="w-4 h-4" />
+                  Compare ({compareCounties.length}/5)
+                </Button>
               </div>
 
-              {/* Maps Container */}
-              <div className="flex-1 flex gap-4 p-4 min-h-0">
+              {/* Maps Container - 1:2 height:width ratio (height is half of width) */}
+              <div className="flex gap-4 p-4" style={{ aspectRatio: '2/1', maxHeight: 'calc(100vh - 20rem)' }}>
                 {/* Health Metric Map */}
                 <div className="flex-1 min-w-0">
                   {error ? (
@@ -148,21 +155,7 @@ export default function Index() {
                     selectedMetric={selectedMetric}
                     selectedYear={selectedYear}
                     onClose={() => setSelectedCounty(null)}
-                    onAddToCompare={handleAddToCompare}
-                    compareCount={compareCounties.length}
                   />
-                </div>
-                
-                {/* Compare Button */}
-                <div className="w-64">
-                  <Button 
-                    onClick={() => setCompareSidebarOpen(true)}
-                    className="w-full gap-2"
-                    variant={compareCounties.length > 0 ? "default" : "outline"}
-                  >
-                    <GitCompare className="w-4 h-4" />
-                    Compare ({compareCounties.length}/5)
-                  </Button>
                 </div>
               </div>
             </div>
