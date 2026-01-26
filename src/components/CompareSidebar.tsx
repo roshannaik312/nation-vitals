@@ -34,11 +34,11 @@ interface CompareSidebarProps {
 }
 
 const CHART_COLORS = [
-  'hsl(var(--primary))',
-  'hsl(220, 70%, 50%)',
-  'hsl(280, 70%, 50%)',
-  'hsl(340, 70%, 50%)',
-  'hsl(40, 70%, 50%)',
+  '#3b82f6', // Blue
+  '#10b981', // Green
+  '#f59e0b', // Orange
+  '#ef4444', // Red
+  '#8b5cf6', // Purple
 ];
 
 export function CompareSidebar({

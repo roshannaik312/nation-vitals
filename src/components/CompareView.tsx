@@ -25,7 +25,7 @@ interface CompareViewProps {
   onClear: () => void;
 }
 
-const CHART_COLORS = ['hsl(var(--primary))', 'hsl(220, 70%, 50%)'];
+const CHART_COLORS = ['#3b82f6', '#10b981']; // Blue, Green
 
 export function CompareView({ counties, data, onRemove, onClear }: CompareViewProps) {
   // Build time series data for each county
